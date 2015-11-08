@@ -1,3 +1,4 @@
+import Control.Applicative
 import Data.Set
 
 type VarName = String
@@ -27,6 +28,7 @@ isval :: LambdaTerm -> Bool
 isval (TmAbs _ _) = True
 isval _ = False
 
+-- one step evaluation - Monad (do) version
 eval1 :: LambdaTerm -> Maybe LambdaTerm
 eval1 (TmApp (TmAbs x t12) v2) | isval v2 = Just $ termSubst x v2 t12
 eval1 (TmApp v1 t2) | isval v1 = do
@@ -36,6 +38,13 @@ eval1 (TmApp t1 t2) = do
     t1' <- eval1 t1
     return $ TmApp t1' t2
 eval1 _ = Nothing
+
+-- one step evaluation - Applicative version
+eval1' :: Term -> Maybe Term
+eval1' (TmApp (TmAbs x t12) v2) | isval v2 = Just $ termSubst x v2 t12
+eval1' (TmApp v1 t2) | isval v1 = let t2' = eval1' t2 in TmApp <$> Just v1 <*> t2'
+eval1' (TmApp t1 t2) = let t1' = eval1' t1 in TmApp <$> t1' <*> Just t2
+eval1' _ = Nothing
 
 eval :: LambdaTerm -> Either String LambdaTerm
 eval t = case eval1 t of Just s            -> eval s
