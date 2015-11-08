@@ -15,7 +15,12 @@ data LambdaTerm
     = TmVar VarName
     | TmAbs VarName LambdaTerm
     | TmApp LambdaTerm LambdaTerm
-    deriving (Eq, Show)
+    deriving (Eq)
+
+instance Show LambdaTerm where
+    show (TmVar x) = x
+    show (TmAbs x t1) = "(\\" ++ (show (TmVar x)) ++ "." ++ (show t1) ++ ")"
+    show (TmApp t1 t2) = "(" ++ (show t1) ++ " " ++ (show t2) ++ ")"
 
 fv :: LambdaTerm -> Set VarName
 fv (TmVar x) = singleton x
