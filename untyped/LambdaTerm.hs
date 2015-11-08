@@ -69,3 +69,6 @@ evalWithLog t = case eval1 t of
         tell ["The reduced term is a non-value normal form."]
         return $ Left t
 
+printEvalStep :: LambdaTerm -> IO ()
+printEvalStep t = mapM_ putStrLn $ snd $ runWriter $ evalWithLog t
+
