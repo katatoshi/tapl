@@ -3,7 +3,7 @@ module LambdaTerm
 , isval
 , eval1
 , eval
-, eval'
+, evalWithLog
 ) where
 
 import Control.Monad.Writer
@@ -51,11 +51,11 @@ eval t = case eval1 t of Just s -> eval s
                          Nothing | isval t -> Right t
                          _ -> Left t
 
-eval' :: LambdaTerm -> Writer [String] (Either LambdaTerm LambdaTerm)
-eval' t = case eval1 t of
+evalWithLog :: LambdaTerm -> Writer [String] (Either LambdaTerm LambdaTerm)
+evalWithLog t = case eval1 t of
     Just s -> do
         tell [show t]
-        eval' s
+        evalWithLog s
     Nothing | isval t -> do
         tell [show t]
         return $ Right t
