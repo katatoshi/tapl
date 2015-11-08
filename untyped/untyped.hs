@@ -37,9 +37,7 @@ eval1 (TmApp t1 t2) = do
     return $ TmApp t1' t2
 eval1 _ = Nothing
 
-type ErrorMessage = String
-
-eval :: Term -> Either ErrorMessage Term
+eval :: Term -> Either String Term
 eval t = case eval1 t of Just s            -> eval s
                          Nothing | isval t -> Right t
                          _                 -> Left $ show t ++ " is a non-value normal form."
