@@ -27,6 +27,12 @@ fv (TmVar x) = singleton x
 fv (TmAbs x t1) = fv t1 \\ singleton x
 fv (TmApp t1 t2) = fv t1 `union` fv t2
 
+escapeCollision :: LambdaTerm -> LambdaTerm -> VarName -> VarName
+escapeCollision t1 s y
+    | y' `elem` (fv t1 `union` fv s) = escapeCollision t1 s y'
+    | otherwise = y'
+    where y' = y ++ "'"
+
 termSubst :: VarName -> LambdaTerm -> LambdaTerm -> LambdaTerm
 termSubst x s (TmVar y)
     | x == y = s
@@ -35,7 +41,7 @@ termSubst x s (TmApp t1 t2) = TmApp (termSubst x s t1) (termSubst x s t2)
 termSubst x s (TmAbs y t1)
     | x == y = TmAbs y t1
     | x /= y && (not (y `elem` fv s) || not (x `elem` fv t1)) = TmAbs y $ termSubst x s t1
-    | otherwise = let z = x ++ y in TmAbs z $ termSubst x s $ termSubst y (TmVar z) t1
+    | otherwise = let z = escapeCollision t1 s y in TmAbs z $ termSubst x s $ termSubst y (TmVar z) t1
 
 isval :: LambdaTerm -> Bool
 isval (TmAbs _ _) = True
