@@ -111,6 +111,13 @@ eval1 (TmApp t1 t2) = do
     return $ TmApp t1' t2
 eval1 _ = Nothing
 
+-- one step evaluation - Applicative version
+eval1' :: Term -> Maybe Term
+eval1' (TmApp (TmAbs x t12) v2) | isval v2 = Just $ termSubst x v2 t12
+eval1' (TmApp v1 t2) | isval v1 = let t2' = eval1' t2 in TmApp <$> Just v1 <*> t2'
+eval1' (TmApp t1 t2) = let t1' = eval1' t1 in TmApp <$> t1' <*> Just t2
+eval1' _ = Nothing
+
 eval :: LambdaTerm -> Either LambdaTerm LambdaTerm
 eval t = case eval1 t of Just s -> eval s
                          Nothing | isval t -> Right t
