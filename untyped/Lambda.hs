@@ -111,11 +111,12 @@ lambdaTermParse
     <|> Parsec.try tmAbsParse
     <|> Parsec.try tmAppParse
 
--- ラムダ項を表す文字列を LambdaTerm 型の値にパースする関数（エラー処理無しで値を直接返す）
+-- ラムダ項を表す文字列を LambdaTerm 型の値にパースする関数
 parseLambdaTerm :: String -> Either Parsec.ParseError LambdaTerm
 parseLambdaTerm s = parse lambdaTermParse s
 
--- ラムダ項を表す文字列を LambdaTerm 型の値にパースする関数（名前は read 関数っぽいところから）
+-- ラムダ項を表す文字列を LambdaTerm 型の値にパースする関数（エラー処理無しで直接値を返す）
+-- 名前はパースに失敗すると例外を投げるところが read 関数っぽいところから
 readLambdaTerm :: String -> LambdaTerm
 readLambdaTerm s = let Right t = parse lambdaTermParse s in t
 
