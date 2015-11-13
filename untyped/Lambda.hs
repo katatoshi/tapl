@@ -47,7 +47,7 @@ evalWithLog t = case eval1 t of
         return $ Right t
     _ -> do
         tell [show t]
-        tell ["The reduced term is a non-value normal form."]
+        tell ["Error: stuck state"]
         return $ Left t
 
 -- 受け取ったラムダ項の評価ステップを標準出力に出力する関数
