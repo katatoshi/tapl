@@ -1,0 +1,7 @@
+id = (\x.x)
+(id (\z.(id z)))
+tru = (\t.(\f.t))
+fls = (\t.(\f.f))
+test = (\l.(\m.(\n.((l m) n))))
+(((test tru) id) (id (\z.(id z))))
+(((test fls) id) (id (\z.(id z))))
